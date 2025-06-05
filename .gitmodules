@@ -1,0 +1,9 @@
+[submodule "drivers/components/Common"]
+	path = drivers/components/Common
+	url = https://github.com/STMicroelectronics/stm32-bsp-common
+[submodule "drivers/components/stm32-lsm303dlhc"]
+	path = drivers/components/stm32-lsm303dlhc
+	url = https://github.com/STMicroelectronics/stm32-lsm303dlhc
+[submodule "drivers/stm32f4xx/STM32F4xx_HAL_Driver"]
+	path = drivers/stm32f4xx/STM32F4xx_HAL_Driver
+	url = https://github.com/STMicroelectronics/stm32f4xx-hal-driver

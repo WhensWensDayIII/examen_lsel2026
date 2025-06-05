@@ -1,0 +1,137 @@
+{
+    "configurations": [
+        {
+            "name": "native-rpi_hat",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/rpi_hat/**",
+                "${workspaceFolder}/port/rpi_hat/include/"
+            ],
+            "defines": [],
+            "compilerPath": "gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "native-linux_stdio",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/linux_stdio/**",
+                "${workspaceFolder}/port/linux_stdio/include/"
+            ],
+            "defines": [],
+            "compilerPath": "gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "cross-rpi_hat 64-bit",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/rpi_hat/**"
+            ],
+            "defines": [],
+            "compilerPath": "aarch64-none-linux-gnu-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "cross-linux_stdio 64-bit",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/linux_stdio/**"
+            ],
+            "defines": [],
+            "compilerPath": "aarch64-none-linux-gnu-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "cross-rpi_hat 32-bit",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/rpi_hat/**"
+            ],
+            "defines": [],
+            "compilerPath": "arm-none-linux-gnueabihf-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "cross-linux_stdio 32-bit",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/linux_stdio/**"
+            ],
+            "defines": [],
+            "compilerPath": "arm-none-linux-gnueabihf-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
+        {
+            "name": "cross-stm32_acc_lcd 32-bit",
+            "includePath": [
+                "${workspaceFolder}/common/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/port/stm32f411e_acc_lcd/**",
+                "${workspaceFolder}/../../drivers/**",
+                "${workspaceFolder}/../../drivers/components/ssd1306",
+                "${workspaceFolder}/../../drivers/components/lsm303dlhc",
+                "${workspaceFolder}/../../drivers/components/Common"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F411xE"
+            ],
+            "compilerPath": "arm-none-eabi-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "gcc-arm"
+        },
+        {
+            "name": "Ubuntu20-ceedling",
+            "includePath": [
+                "${workspaceFolder}/common/src/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/ceedling/build/test/mocks",
+                "/var/lib/gems/2.7.0/gems/ceedling-0.31.1/vendor/unity/src/",
+                "/var/lib/gems/2.7.0/gems/ceedling-0.31.1/vendor/cmock/src/",
+                "${workspaceFolder}/ceedling/test/support/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "osx-ceedling",
+            "includePath": [
+                "${workspaceFolder}/common/src/**",
+                "${workspaceFolder}/common/include/",
+                "${workspaceFolder}/ceedling/build/test/mocks",
+                "${GEM_HOME}/gems/ceedling-0.31.1/vendor/unity/src/",
+                "${GEM_HOME}/gems/ceedling-0.31.1/vendor/cmock/src/",
+                "${workspaceFolder}/ceedling/test/support/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "macos-clang-arm64"
+        }
+    ],
+    "version": 4
+}

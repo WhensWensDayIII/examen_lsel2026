@@ -1,0 +1,132 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug native",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "gdb",
+                "program": "${workspaceFolder}/output/${workspaceFolderBasename}"
+            },
+            "osx": {
+                "MIMode": "lldb",
+                "miDebuggerPath": "${env:HOME}/.vscode/extensions/ms-vscode.cpptools-1.25.3-darwin-arm64/debugAdapters/lldb-mi/bin/lldb-mi", // CHECK THE CORRECT PATH FOR YOUR MACHINE
+            },
+            "program": "${workspaceFolder}/output/${workspaceFolderBasename}"
+              //"preLaunchTask": "Clean & Re-Build"
+        },
+        {
+            "name": "Debug Linux 64-bit Remote",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "targetArchitecture": "arm",
+            "windows": {
+                "miDebuggerPath": "aarch64-none-linux-gnu-gdb",
+            },
+            "linux": {
+                "miDebuggerPath": "aarch64-none-linux-gnu-gdb",
+            },
+            "osx": {
+                "miDebuggerPath": "aarch64-unknown-linux-gnu-gdb",
+            },
+            "miDebuggerServerAddress": "10.8.43.250:2345",
+            "program": "${workspaceFolder}/output/${workspaceFolderBasename}"
+        },
+        {
+            "name": "Debug Linux 32-bit Remote",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "targetArchitecture": "arm",
+            "windows": {
+                "miDebuggerPath": "arm-linux-gnueabihf-gdb",
+            },
+            "linux": {
+                "miDebuggerPath": "arm-linux-gnueabihf-gdb",
+            },
+            "osx": {
+                "miDebuggerPath": "arm-linux-gnueabihf-gdb",
+            },
+            "miDebuggerServerAddress": "10.8.42.150:2345",
+            "program": "${workspaceFolder}/output/${workspaceFolderBasename}"
+        },
+        {
+            "name": "Debug device stm32f411e_acc_lcd",
+            "type": "cortex-debug",
+            "showDevDebugOutput": "raw",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceFolder}/output/${workspaceFolderBasename}.elf",
+            "request": "launch",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "openOCDPath": "openocd",
+            "gdbPath": "arm-none-eabi-gdb",
+            "device": "STM32F411E-DISCO",
+            "configFiles": [
+                "port/stm32f411e_acc_lcd/openocd.cfg"
+            ],
+            "svdFile": "../../svd/STM32F411.svd",
+            "swoConfig": {
+                "enabled": true,
+                "cpuFrequency": 100000000,
+                "swoFrequency": 2000000,
+                "source": "probe",
+                "decoders": [
+                    {
+                    "type": "console",
+                    "label": "ITM",
+                    "port": 0
+                    }
+                ]
+            },
+        },
+        {
+            "name": "Ceedling - Debug test",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "gdb",
+            },
+            "osx": {
+                "MIMode": "lldb",
+                "miDebuggerPath": "${env:HOME}/.vscode/extensions/ms-vscode.cpptools-1.25.3-darwin-arm64/debugAdapters/lldb-mi/bin/lldb-mi", // CHECK THE CORRECT PATH FOR YOUR MACHINE
+            },
+            "program": "${workspaceFolder}/ceedling/build/test/out/${command:ceedlingExplorer.debugTestExecutable}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+    ]
+}
