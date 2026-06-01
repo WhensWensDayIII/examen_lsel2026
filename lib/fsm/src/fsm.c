@@ -109,4 +109,31 @@ void fsm_fire(fsm_t *p_fsm)
     }
 }
 
+int fsm_check_name(fsm_t *p_fsm, const char *name)
+{
+    // Control de errores: si algún puntero es NULL, no pueden ser iguales
+    if (p_fsm == NULL || p_fsm->name == NULL || name == NULL)
+    {
+        return 0; // FALSE
+    }
 
+    int i = 0;
+    // Comparamos carácter a carácter mientras ninguno llegue al final ('\0')
+    while (p_fsm->name[i] != '\0' && name[i] != '\0')
+    {
+        if (p_fsm->name[i] != name[i])
+        {
+            return 0; // FALSE: Encontrado un carácter diferente
+        }
+        i++;
+    }
+
+    // Si el bucle termina, comprobamos que AMBAS cadenas hayan terminado a la vez.
+    // Si una es más larga que otra (ej: "fsm" y "fsm_legacy"), uno de los dos no será '\0'.
+    if (p_fsm->name[i] == '\0' && name[i] == '\0')
+    {
+        return 1; // TRUE: Son exactamente iguales
+    }
+
+    return 0; // FALSE
+}

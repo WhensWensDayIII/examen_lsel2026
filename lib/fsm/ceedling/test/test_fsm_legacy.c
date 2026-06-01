@@ -358,3 +358,40 @@ void test_fsm_new_should_fail_if_name_is_null(void)
     
     TEST_ASSERT_NULL(fsm);
 }
+
+
+//...........................Checkname tests...........................
+// Test: Deben coincidir si las cadenas son idénticas
+void test_fsm_check_name_should_return_true_if_names_match(void)
+{
+    fsm_t fsm;
+    fsm.name = "fsm_legacy"; // Simulamos que la FSM ya tiene este nombre
+    
+    int resultado = fsm_check_name(&fsm, "fsm_legacy");
+    
+    TEST_ASSERT_EQUAL_INT(1, resultado); // 1 significa TRUE
+}
+
+// Test: Debe devolver FALSE si el nombre es diferente
+void test_fsm_check_name_should_return_false_if_names_differ(void)
+{
+    fsm_t fsm;
+    fsm.name = "fsm_legacy";
+    
+    int resultado = fsm_check_name(&fsm, "fsm_distinta");
+    
+    TEST_ASSERT_EQUAL_INT(0, resultado); // 0 significa FALSE
+}
+
+// Test: Protección frente a punteros NULL
+void test_fsm_check_name_should_return_false_if_pointer_is_null(void)
+{
+    fsm_t fsm;
+    fsm.name = "fsm_legacy";
+    
+    // Si la FSM es NULL o la cadena a comparar es NULL, debe ser FALSE de forma segura
+    TEST_ASSERT_EQUAL_INT(0, fsm_check_name(NULL, "fsm_legacy"));
+    TEST_ASSERT_EQUAL_INT(0, fsm_check_name(&fsm, NULL));
+}
+
+
