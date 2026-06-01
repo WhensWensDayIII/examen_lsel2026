@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Ceedling - Debug test",
+            "name": "Ceedling - Depurar desde pestaña Test",
             "type": "cppdbg",
             "request": "launch",
             "args": [],
@@ -16,13 +16,14 @@
             },
             "linux": {
                 "MIMode": "gdb",
-                "miDebuggerPath": "gdb",
+                "miDebuggerPath": "gdb" // <-- Corregido: Eliminada coma final
             },
             "osx": {
                 "MIMode": "lldb",
-                "miDebuggerPath": "${env:HOME}/.vscode/extensions/ms-vscode.cpptools-1.32.2-darwin-arm64/debugAdapters/lldb-mi/bin/lldb-mi", // CHECK THE CORRECT PATH FOR YOUR MACHINE
+                "miDebuggerPath": "${env:HOME}/.vscode/extensions/ms-vscode.cpptools-1.32.2-darwin-arm64/debugAdapters/lldb-mi/bin/lldb-mi"
             },
-            "program": "${workspaceFolder}/ceedling/build/test/out/${command:ceedlingExplorer.debugTestExecutable}",
+            // Corregido: Eliminamos "/ceedling/" para apuntar a la raíz real de tu compilación
+            "program": "${workspaceFolder}/build/test/out/${command:ceedlingExplorer.debugTestExecutable}",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -30,6 +31,29 @@
                     "ignoreFailures": true
                 }
             ]
-        },        
+        },
+        {
+            "name": "Ceedling - Depurar FSM (F5 Directo)",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "/home/lsel/Escritorio/LSEL2026-23_ExamenBloque2/examen_lsel2026/lib/fsm/ceedling",
+            "environment": [],
+            "externalConsole": false,
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "gdb"
+            },
+            // Cambia 'test_fsm.out' por el nombre exacto de tu archivo compilado si se llama diferente
+            "program": "/home/lsel/Escritorio/LSEL2026-23_ExamenBloque2/examen_lsel2026/lib/fsm/ceedling/build/test/out/test_fsm_legacy.out",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }      
     ]
 }
