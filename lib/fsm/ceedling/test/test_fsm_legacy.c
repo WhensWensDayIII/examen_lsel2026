@@ -57,7 +57,7 @@ void test_fsm_new_nullWhenNullTransition(void)
 {
     fsm_t *f = (fsm_t*)1;
 
-    f = fsm_new(NULL);
+    f = fsm_new(NULL, "fsm_1");
 
     TEST_ASSERT_EQUAL (NULL, f);
 }
@@ -70,7 +70,7 @@ void test_fsm_new_nullWhenNullTransition(void)
 void test_fsm_nullWhenFirstOrigStateIsMinusOne(void) {
     fsm_trans_t tt[] = {{-1, check_func, 1, output_func}};
     fsm_t *f = (fsm_t*)1;
-    f = fsm_new(tt);
+    f = fsm_new(tt, "fsm_1");
  
     TEST_ASSERT_EQUAL (f, NULL);
 }
@@ -82,7 +82,7 @@ void test_fsm_nullWhenFirstOrigStateIsMinusOne(void) {
 void test_fsm_nullWhenFirstDstStateIsMinusOne(void) {
     fsm_trans_t tt[] = {{1, check_func, -1, output_func}};
     fsm_t *f = (fsm_t*)1;
-    f = fsm_new(tt);
+    f = fsm_new(tt, "fsm_1");
    
     TEST_ASSERT_EQUAL (f, NULL);
 }
@@ -94,7 +94,7 @@ void test_fsm_nullWhenFirstDstStateIsMinusOne(void) {
 void test_fsm_nullWhenFirstCheckFunctionIsNull(void) {
     fsm_trans_t tt[] = {{1, NULL, 1, output_func}};
     fsm_t *f = (fsm_t*)1;
-    f = fsm_new(tt);
+    f = fsm_new(tt, "fsm_1");
    
     TEST_ASSERT_EQUAL (f, NULL);
 }
@@ -115,7 +115,7 @@ void test_fsm_new_nonNullWhenOneValidTransitionCondition(fsm_output_func_t out)
     };
     fsm_malloc_AddCallback(cb_malloc);
     fsm_malloc_ExpectAnyArgsAndReturn(NULL);
-    fsm_t *f = fsm_new(tt); 
+    fsm_t *f = fsm_new(tt, "fsm_1"); 
     TEST_ASSERT_NOT_NULL(f);
      
     free(f);
@@ -135,7 +135,7 @@ void test_fsm_new_fsmGetStateReturnsOrigStateOfFirstTransitionAfterInit(void)
         {-1, NULL, -1, NULL}
     };
     fsm_malloc_Stub(cb_malloc);
-    fsm_t *f = fsm_new(tt);
+    fsm_t *f = fsm_new(tt, "fsm_1");
     int state = fsm_get_state(f);
     TEST_ASSERT_EQUAL(STATE0, state);
 
@@ -156,7 +156,7 @@ void test_fsm_fire_isTrueReturnsFalseMeansDoNothingIsNotCalledAndStateKeepsTheSa
     };
     check_func_IgnoreAndReturn(0);
     fsm_malloc_Stub(cb_malloc);
-    fsm_t *f = fsm_new(tt);
+    fsm_t *f = fsm_new(tt, "fsm_1");
     int state = fsm_get_state(f);
     TEST_ASSERT_EQUAL(STATE0, state);
 
@@ -177,7 +177,7 @@ void test_fsm_fire_checkFunctionCalledWithFsmPointerFromFsmFire(void)
 
     fsm_malloc_Stub(cb_malloc);
 
-    fsm_t *f = fsm_new(tt);
+    fsm_t *f = fsm_new(tt, "fsm_1");
     check_func_ExpectAndReturn(f, 1);
     fsm_fire(f);
 
@@ -197,7 +197,7 @@ void test_fsm_fire_checkFunctionIsCalledAndResultIsImportantForTransition(bool r
         {-1, NULL, -1, NULL}
     };
     fsm_t f;
-    fsm_init(&f, tt);
+    fsm_init(&f, tt,"fsm_1");
     check_func_IgnoreAndReturn(returnValue);
     fsm_fire(&f);
     int state = fsm_get_state(&f);
@@ -218,7 +218,7 @@ void test_fsm_new_nullWhenFsmMallocReturnsNull(void)
         {-1, NULL, -1, NULL}
     };
     fsm_malloc_ExpectAnyArgsAndReturn(NULL);
-    fsm_t *f = fsm_new(tt);
+    fsm_t *f = fsm_new(tt, "fsm_2");
     TEST_ASSERT_EQUAL(NULL, f);
 
     free(f);
@@ -249,7 +249,7 @@ void test_fsm_fire_callsFirstIsTrueFromState0AndThenIsTrue2FromState1(void)
     };
     fsm_t f;
     int res;
-    fsm_init(&f, tt);
+    fsm_init(&f, tt,"fsm_1");
     res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(0, res);
     check_func_ExpectAndReturn(&f, 1);
@@ -274,8 +274,8 @@ void test_fsm_new_calledTwiceWithSameValidDataCreatesDifferentInstancePointer(vo
         {-1, NULL, -1, NULL}
     };
     fsm_malloc_Stub(cb_malloc);
-    fsm_t *f1 = fsm_new(tt);
-    fsm_t *f2 = fsm_new(tt);
+    fsm_t *f1 = fsm_new(tt, "fsm_1");
+    fsm_t *f2 = fsm_new(tt, "fsm_2");
 
     TEST_ASSERT_NOT_EQUAL(f1, f2);
 
@@ -295,7 +295,7 @@ void test_fsm_fire_outFunctionCalled(void)
     };
     
     fsm_t f;
-    fsm_init(&f, tt);
+    fsm_init(&f, tt, "fsm_1");
     output_func_ExpectAnyArgs();
     check_func_IgnoreAndReturn(1);
     fsm_fire(&f);
@@ -311,7 +311,50 @@ void test_fsm_NotModifiedWhenTTnull(void) {
     int res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(STATE0, res);
 
-    fsm_init(&f, NULL);
+    fsm_init(&f, NULL, "fsm_1");
     res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(STATE0, res);
+}
+
+
+
+//Nuevos tests para comprobar funcionalidad
+
+// Test 1: Comprobar que un nombre válido (<= 16 caracteres) se guarda correctamente
+void test_fsm_new_should_accept_valid_name(void){
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    
+    static fsm_t fsm_comparacion;
+    fsm_init(&fsm_comparacion, tt, "fsm_corta");
+
+    fsm_malloc_ExpectAndReturn(sizeof(fsm_t), &fsm_comparacion);
+    
+    fsm_t *fsm = fsm_new(tt, "fsm_corta"); // Ejecuta el código real
+    
+    // Verificar que fsm_new nos ha devuelto el puntero simulado y tiene el nombre
+    TEST_ASSERT_EQUAL_PTR(&fsm_comparacion, fsm);
+    TEST_ASSERT_EQUAL_STRING("fsm_corta", fsm->name); 
+    
+    fsm_free_Expect(&fsm_comparacion);
+    
+    fsm_destroy(fsm);
+}
+
+// Test 2: Comprobar que un nombre inválido (> 16 caracteres) no se acepta
+void test_fsm_new_should_not_accept_invalid_name(void){
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    fsm_t *fsm = fsm_new(tt, "fsm_muy_largo_nombre"); // 20 caracteres
+
+    TEST_ASSERT_NULL(fsm);
+}
+
+// Test 3: Comprobar que si el nombre es NULL también es INVÁLIDO
+void test_fsm_new_should_fail_if_name_is_null(void)
+{
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    
+    // Tampoco debe llamar a fsm_malloc porque sale al principio por el IF
+    fsm_t *fsm = fsm_new(tt, NULL); 
+    
+    TEST_ASSERT_NULL(fsm);
 }

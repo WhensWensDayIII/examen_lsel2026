@@ -25,12 +25,24 @@ void __attribute__((weak)) fsm_free(void* p)
 }
 //GCOVR_EXCL_STOP
 
-fsm_t *fsm_new(fsm_trans_t *p_tt)
+fsm_t *fsm_new(fsm_trans_t *p_tt, const char *name)
 {
-    if (p_tt == NULL)
+
+    //Si el puntero es nulo o el nombre es nulo, el fsm es inválido
+    if (p_tt == NULL || name == NULL)
     {
         return NULL;
     }
+
+    // Validación: Contar caracteres distintos de 0 (máximo 16)
+    int len = 0;
+    while (name[len] != '\0') {
+        len++;
+        if (len > 16) {
+            return NULL; // Más de 16 caracteres -> Inválido
+        }
+    }
+
     if ((p_tt->orig_state == -1) || (p_tt->in == NULL) || (p_tt->dest_state == -1))
     {
         return NULL;
@@ -38,7 +50,7 @@ fsm_t *fsm_new(fsm_trans_t *p_tt)
     fsm_t *p_fsm = (fsm_t *)fsm_malloc(sizeof(fsm_t));
     if (p_fsm != NULL)
     {
-        fsm_init(p_fsm, p_tt);
+        fsm_init(p_fsm, p_tt, name);
     }
     return p_fsm;
 }
@@ -48,13 +60,26 @@ void fsm_destroy(fsm_t *p_fsm)
     fsm_free(p_fsm);
 }
 
-void fsm_init(fsm_t *p_fsm, fsm_trans_t *p_tt)
+void fsm_init(fsm_t *p_fsm, fsm_trans_t *p_tt, const char *name)
 {
-    if (p_tt != NULL)
+    //Si el puntero es nulo o el nombre es nulo, el fsm es inválido
+    if (p_tt == NULL || name == NULL)
     {
+        return;
+    }
+    // Validación: Contar caracteres distintos de 0 (máximo 16)
+    int len = 0;
+    while (name[len] != '\0') {
+        len++;
+        if (len > 16) {
+            return; // Más de 16 caracteres -> Inválido
+        }
+    }
+
         p_fsm->p_tt = p_tt;
         p_fsm->current_state = p_tt->orig_state;
-    }
+        p_fsm->name = name;
+
 }
 
 int fsm_get_state(fsm_t *p_fsm)
@@ -83,3 +108,5 @@ void fsm_fire(fsm_t *p_fsm)
         }
     }
 }
+
+

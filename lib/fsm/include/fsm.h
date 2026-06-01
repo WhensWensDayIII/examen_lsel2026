@@ -47,6 +47,7 @@ struct fsm_t
 {
   int current_state; /*!< Current state of the FSM */
   fsm_trans_t *p_tt; /*!< Pointer to the  state machine transition table */
+  const char *name; //<-Nombre del fsm
 };
 
 /* Function prototypes -----------------------------------------------------------------*/
@@ -59,7 +60,7 @@ struct fsm_t
  * @param p_tt Pointer to the  state machine transition table
  * @return fsm_t* Pointer to the memory address where the new state machine is located
  */
-fsm_t *fsm_new(fsm_trans_t *p_tt);
+fsm_t *fsm_new(fsm_trans_t *p_tt, const char *name);
 
 /**
  * @brief It frees the memory previously allocated for the state machine. Once this function is called, the state machine becomes unusable. It is only necessary to call this function if the state machine was previously created by calling the `fsm_new` function.
@@ -76,7 +77,7 @@ void fsm_destroy(fsm_t *p_fsm);
  * @param p_fsm Pointer to the memory address where the new state machine is located
  * @param p_tt Pointer to the  state machine transition table
  */
-void fsm_init(fsm_t *p_fsm, fsm_trans_t *p_tt);
+void fsm_init(fsm_t *p_fsm, fsm_trans_t *p_tt, const char *name);
 
 /**
  * @brief Get the current state of the state machine.
