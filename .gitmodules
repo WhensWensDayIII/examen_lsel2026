@@ -7,3 +7,6 @@
 [submodule "drivers/stm32f4xx/STM32F4xx_HAL_Driver"]
 	path = drivers/stm32f4xx/STM32F4xx_HAL_Driver
 	url = https://github.com/STMicroelectronics/stm32f4xx-hal-driver
+[submodule "drivers/components/lis3dh"]
+	path = drivers/components/lis3dh
+	url = https://github.com/STMicroelectronics/lis3dh-pid.git

@@ -73,6 +73,12 @@ lsm303dlhc_DIR := $(COMPONENTS)/stm32-lsm303dlhc
 INCLUDES += -I$(lsm303dlhc_DIR)	
 SOURCES  += $(lsm303dlhc_DIR)/lsm303dlhc.c
 
+#LIS3DH
+lis3dh_DIR := $(COMPONENTS)/lis3dh
+INCLUDES += -I$(lis3dh_DIR)
+SOURCES  += $(lis3dh_DIR)/lis3dh_reg.c
+
+
 Common_DIR := $(COMPONENTS)/Common
 INCLUDES   += -I$(Common_DIR)
 

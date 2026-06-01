@@ -3,8 +3,13 @@
 #include "stm32_bsp.h"
 #include <string.h> 
 
-#include "lsm303dlhc.h"
+//#include "lsm303dlhc.h"
+#include "lis3dh_reg.h"
+
 #include "ssd1306.h"
+
+
+static stmdev_ctx_t dev_ctx;
 
 I2C_HandleTypeDef hi2c1;
 extern FontDef Font_8x8;
@@ -73,7 +78,7 @@ void COMPASSACCELERO_IO_ITConfig (void)
 // Escribe en el acelerómetro byte a byte (configuración)
 void COMPASSACCELERO_IO_Write (uint16_t DeviceAddr, uint8_t RegisterAddr, uint8_t Value)
 {
-  if (HAL_I2C_Mem_Write(&hi2c1, DeviceAddr, RegisterAddr, 1, &Value, 1, 100) != HAL_OK) {
+  if (HAL_I2C_Mem_Write(&hi2c1, LIS3DH_I2C_ADD_H, RegisterAddr, 1, &Value, 1, 100) != HAL_OK) {
     while (1) {
       ;
     }
@@ -84,7 +89,7 @@ void COMPASSACCELERO_IO_Write (uint16_t DeviceAddr, uint8_t RegisterAddr, uint8_
 uint8_t COMPASSACCELERO_IO_Read (uint16_t DeviceAddr, uint8_t RegisterAddr)
 {
   uint8_t value = 0;
-  if (HAL_I2C_Mem_Read(&hi2c1, DeviceAddr, RegisterAddr, 1, &value, 1, 100) != HAL_OK) {
+  if (HAL_I2C_Mem_Read(&hi2c1, LIS3DH_I2C_ADD_H, RegisterAddr, 1, &value, 1, 100) != HAL_OK) {
     while (1) {
       ;
     }
@@ -93,25 +98,12 @@ uint8_t COMPASSACCELERO_IO_Read (uint16_t DeviceAddr, uint8_t RegisterAddr)
 }
 
 ACCELERO_DrvTypeDef* bsp_get_accelero(void) {
-  return &Lsm303dlhcDrv;
+  return 0; //Ya inicializo en acc init
 }
 
 uint16_t bsp_get_accelero_config(void) {
-  ACCELERO_InitTypeDef acc_init_config;
-  uint16_t ctrl =	0x0000;;
-  acc_init_config.Power_Mode = LSM303DLHC_NORMAL_MODE;
-  acc_init_config.AccOutput_DataRate = LSM303DLHC_ODR_50_HZ;
-  acc_init_config.Axes_Enable = LSM303DLHC_AXES_ENABLE;
-  acc_init_config.AccFull_Scale = LSM303DLHC_FULLSCALE_2G;
-  acc_init_config.BlockData_Update = LSM303DLHC_BlockUpdate_Continous;
-  acc_init_config.Endianness = LSM303DLHC_BLE_LSB;
-  acc_init_config.High_Resolution = LSM303DLHC_HR_ENABLE;
-  ctrl |= (acc_init_config.Power_Mode | \
-           acc_init_config.AccOutput_DataRate | \
-           acc_init_config.Axes_Enable);
-  ctrl |= ((acc_init_config.BlockData_Update | acc_init_config.Endianness | \
-            acc_init_config.AccFull_Scale | acc_init_config.High_Resolution) << 8);
-  return ctrl;
+
+  return 0;
 }
 
 int lcd_init(void)
@@ -169,3 +161,49 @@ uint8_t ssd1306_WriteData(void *hi2c, uint8_t* data, uint16_t len)
 }
 
 
+
+// Funciones para lis3dh
+
+int32_t LIS3DH_IO_Write(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)
+{
+  // Usamos la dirección de escritura de 8 bits del LIS3DH (0x32)
+  if (HAL_I2C_Mem_Write((I2C_HandleTypeDef*)handle, 0x32, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)bufp, len, 1000) != HAL_OK) {
+    return -1;
+  }
+  return 0;
+}
+
+int32_t LIS3DH_IO_Read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)
+{
+  // HAL_I2C_Mem_Read también recibe la dirección 0x32, la HAL le aplica el bit R/W internamente
+  if (HAL_I2C_Mem_Read((I2C_HandleTypeDef*)handle, 0x32, reg, I2C_MEMADD_SIZE_8BIT, bufp, len, 1000) != HAL_OK) {
+    return -1;
+  }
+  return 0;
+}
+
+void LIS3DH_AccReadXYZ(int16_t *pDataXYZ)
+{
+  /* Llama pasándole el contexto registrado del sensor y el buffer */
+  lis3dh_acceleration_raw_get(&dev_ctx, pDataXYZ);
+}
+
+
+void LIS3DH_AccInit(uint16_t InitStruct)
+{
+  // 1. Inicializamos el hardware físico del I2C (pines, reloj, etc.)
+  COMPASSACCELERO_IO_Init();
+
+  // 2. Conectamos las funciones puente al contexto del submódulo
+  dev_ctx.write_reg = (stmdev_write_ptr)LIS3DH_IO_Write;
+  dev_ctx.read_reg  = (stmdev_read_ptr)LIS3DH_IO_Read;
+  dev_ctx.handle    = &hi2c1; // Le pasamos nuestro bus de datos
+
+  // 3. CONFIGURACIÓN DEL ODR A 50HZ USANDO EL SUBMÓDULO
+  // Invocamos la función propia de lis3dh.c para cambiar la frecuencia de muestreo.
+  // Esta función llamará por debajo a tu LIS3DH_IO_Write de forma totalmente automática.
+  lis3dh_data_rate_set(&dev_ctx, LIS3DH_ODR_50Hz);
+  
+  // 4. Habilitamos también los ejes X, Y, Z para que el juego pueda leerlos
+  lis3dh_operating_mode_set(&dev_ctx, LIS3DH_HR_12bit); // Modo alta resolución (opcional)
+}
