@@ -317,8 +317,7 @@ void test_fsm_NotModifiedWhenTTnull(void) {
 
 
 
-//Nuevos tests para comprobar funcionalidad
-
+//.........................................fsm_new tests........................
 // Test 1: Comprobar que un nombre válido (<= 16 caracteres) se guarda correctamente
 void test_fsm_new_should_accept_valid_name(void){
     fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
@@ -359,6 +358,28 @@ void test_fsm_new_should_fail_if_name_is_null(void)
 }
 
 
+//...............fsm_init..................
+void test_fsm_init_should_reject_invalid_name_and_not_initialize(void)
+{
+    fsm_t fsm;
+    // Rellenamos la estructura con valores "basura" conocidos
+    fsm.p_tt = NULL;
+    fsm.current_state = -99;
+    fsm.name = NULL;
+
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+
+    //inicializar pasándole un nombre inválido (> 16 caracteres)
+    fsm_init(&fsm, tt, "nombre_super_largo_que_va_a_fallar");
+
+    // Verificamos que fsm_init ha salido sin hacer nada
+    TEST_ASSERT_NULL(fsm.p_tt);
+    TEST_ASSERT_EQUAL_INT(-99, fsm.current_state);
+    TEST_ASSERT_NULL(fsm.name);
+}
+
+
+
 //...........................Checkname tests...........................
 // Test: Deben coincidir si las cadenas son idénticas
 void test_fsm_check_name_should_return_true_if_names_match(void)
@@ -395,8 +416,7 @@ void test_fsm_check_name_should_return_false_if_pointer_is_null(void)
 
 
 
-// Funciones falsas de guarda y acción que ya debes tener arriba en tu archivo
-
+//....................... fsm_fire tests.........................
 
 // Test 1: Si print es FALSE, NO debe llamar a ninguna función de impresión
 void test_fsm_fire_should_not_print_if_print_is_false(void)
