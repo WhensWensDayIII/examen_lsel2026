@@ -13,6 +13,7 @@
 
 /* Other includes */
 #include "fsm.h"
+#include <stdbool.h> 
 
 //GCOVR_EXCL_START
 void* __attribute__((weak)) fsm_malloc(size_t s)
@@ -24,6 +25,12 @@ void __attribute__((weak)) fsm_free(void* p)
     free(p);
 }
 //GCOVR_EXCL_STOP
+
+//print y trans, MOCk
+void fsm_print(const char *name, int state);
+void fsm_trans_print(fsm_trans_t *p_t);
+
+
 
 fsm_t *fsm_new(fsm_trans_t *p_tt, const char *name)
 {
@@ -92,14 +99,31 @@ void fsm_set_state(fsm_t *p_fsm, int state)
     p_fsm->current_state = state;
 }
 
-void fsm_fire(fsm_t *p_fsm)
+void fsm_fire(fsm_t *p_fsm, bool print)
 {
+    if (p_fsm == NULL || p_fsm->p_tt == NULL) {
+        return;
+    }
+
+    //Si print es true, ANTES de comprobar llamamos a fsm_print
+    if (print)
+    {
+        fsm_print(p_fsm->name, p_fsm->current_state);
+    }
+
     fsm_trans_t *p_t;
     for (p_t = p_fsm->p_tt; p_t->orig_state >= 0; ++p_t)
     {
         if ((p_fsm->current_state == p_t->orig_state) && p_t->in(p_fsm))
         {
             p_fsm->current_state = p_t->dest_state;
+            //Si se cumple la transición y print es true, 
+            //llamamos a fsm_trans_print pasándole el puntero de la transición actual
+            if (print)
+            {
+                fsm_trans_print(p_t);
+            }
+
             if (p_t->out)
             {
                 p_t->out(p_fsm);
@@ -137,3 +161,6 @@ int fsm_check_name(fsm_t *p_fsm, const char *name)
 
     return 0; // FALSE
 }
+
+
+

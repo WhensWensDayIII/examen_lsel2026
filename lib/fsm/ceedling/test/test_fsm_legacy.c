@@ -179,7 +179,7 @@ void test_fsm_fire_checkFunctionCalledWithFsmPointerFromFsmFire(void)
 
     fsm_t *f = fsm_new(tt, "fsm_1");
     check_func_ExpectAndReturn(f, 1);
-    fsm_fire(f);
+    fsm_fire(f, false);
 
     free(f);
 }
@@ -199,7 +199,7 @@ void test_fsm_fire_checkFunctionIsCalledAndResultIsImportantForTransition(bool r
     fsm_t f;
     fsm_init(&f, tt,"fsm_1");
     check_func_IgnoreAndReturn(returnValue);
-    fsm_fire(&f);
+    fsm_fire(&f, false);
     int state = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(expectedState, state);
 }
@@ -253,11 +253,11 @@ void test_fsm_fire_callsFirstIsTrueFromState0AndThenIsTrue2FromState1(void)
     res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(0, res);
     check_func_ExpectAndReturn(&f, 1);
-    fsm_fire(&f);
+    fsm_fire(&f, false);
     res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(1, res);
     check_func2_ExpectAndReturn(&f, 1);
-    fsm_fire(&f);
+    fsm_fire(&f, false);
     res = fsm_get_state(&f);
     TEST_ASSERT_EQUAL(0, res);
 }
@@ -298,7 +298,7 @@ void test_fsm_fire_outFunctionCalled(void)
     fsm_init(&f, tt, "fsm_1");
     output_func_ExpectAnyArgs();
     check_func_IgnoreAndReturn(1);
-    fsm_fire(&f);
+    fsm_fire(&f, false);
 }
 
 /**
@@ -395,3 +395,59 @@ void test_fsm_check_name_should_return_false_if_pointer_is_null(void)
 }
 
 
+
+// Funciones falsas de guarda y acción que ya debes tener arriba en tu archivo
+
+
+// Test 1: Si print es FALSE, NO debe llamar a ninguna función de impresión
+void test_fsm_fire_should_not_print_if_print_is_false(void)
+{
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    fsm_t fsm = { .p_tt = tt, .current_state = 0, .name = "fsm_test" };
+
+    // Simulamos que la guarda se cumple para que intente transicionar
+    check_func_ExpectAndReturn(&fsm, 1);
+    output_func_Expect(&fsm);
+
+    // Ejecutamos con print = false. No ponemos EXPECTS de fsm_print ni fsm_trans_print.
+    // Si el código intentase imprimir, CMock lanzaría un error.
+    fsm_fire(&fsm, false); 
+}
+
+// Test 2: Si print es TRUE pero NO se cumple la transición, solo imprime el estado actual
+void test_fsm_fire_should_print_only_state_if_transition_fails(void)
+{
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    fsm_t fsm = { .p_tt = tt, .current_state = 0, .name = "fsm_test" };
+
+    // 1. Esperamos que se llame a fsm_print ANTES de comprobar la transición
+    fsm_print_Expect("fsm_test", 0);
+
+    // Simulamos que la guarda NO se cumple (devuelve 0)
+    check_func_ExpectAndReturn(&fsm, 0);
+
+    // Ejecutamos con print = true
+    fsm_fire(&fsm, true);
+}
+
+// Test 3: Si print es TRUE y SE CUMPLE la transición, imprime estado e imprime transición
+void test_fsm_fire_should_print_state_and_transition_if_fired(void)
+{
+    fsm_trans_t tt[] = { {0, check_func, 1, output_func}, {-1, NULL, -1, NULL} };
+    fsm_t fsm = { .p_tt = tt, .current_state = 0, .name = "fsm_test" };
+
+    // 1. Esperamos que imprima el estado actual antes de comprobar
+    fsm_print_Expect("fsm_test", 0);
+
+    // Simulamos que la guarda SÍ se cumple (devuelve 1)
+    check_func_ExpectAndReturn(&fsm, 1);
+
+    // 2. Esperamos que llame a fsm_trans_print pasándole el puntero a la transición tt[0]
+    fsm_trans_print_Expect(&tt[0]);
+
+    // Esperamos la acción de salida normal
+    output_func_Expect(&fsm);
+
+    // Ejecutamos con print = true
+    fsm_fire(&fsm, true);
+}
