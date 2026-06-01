@@ -58,7 +58,7 @@
     - module_generator                # handy for quickly creating source, header, and test templates
     - gcov                            # test coverage using gcov. Requires gcc, gcov, and a coverage analyzer like gcovr
     #- bullseye                       # test coverage using bullseye. Requires bullseye for your platform
-    - command_hooks                   # write custom actions to be called at different points during the build process
+    #- command_hooks                   # write custom actions to be called at different points during the build process
     #- compile_commands_json_db       # generate a compile_commands.json file
     #- dependencies                   # automatically fetch 3rd party libraries, etc.
     #- subprojects                    # managing builds and test for static libraries
@@ -318,7 +318,7 @@
 #      :build_root: ./subprojectA/build
 #      :defines: []
 
-:command_hooks:
+#:command_hooks:
 #   :pre_mock_preprocess:
 #   :post_mock_preprocess:
 #   :pre_test_preprocess:
@@ -330,9 +330,9 @@
 #   :pre_compile_execute:
 #   :post_compile_execute:
 #   :pre_link_execute:
-  :post_link_execute:
-    :executable: cp
-    :arguments: [ "`find build/test/out/ | grep out$ | awk -F/ '{if (NF>4){print $0}}'`", "build/test/out/"]
+#  :post_link_execute:
+#    :executable: cp
+#    :arguments: [ "`find build/test/out/ | grep out$ | awk -F/ '{if (NF>4){print $0}}'`", "build/test/out/"]
 #   :pre_test_fixture_execute:
 #   :post_test_fixture_execute:
 #   :pre_test:

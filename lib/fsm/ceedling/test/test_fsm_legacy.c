@@ -48,7 +48,6 @@ void setUp(void)
 void tearDown(void)
 {
 }
-
 /**
  * @brief Comprueba que la funcion de fsm_new devuelve NULL 
  *        y no llama a fsm_malloc si la tabla de transiciones es NULL 
