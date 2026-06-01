@@ -47,7 +47,7 @@
             "osx": {
                 "miDebuggerPath": "aarch64-unknown-linux-gnu-gdb",
             },
-            "miDebuggerServerAddress": "10.8.43.250:2345",
+            "miDebuggerServerAddress": "10.8.43.123:2345",
             "program": "${workspaceFolder}/output/${workspaceFolderBasename}"
         },
         {
